@@ -57,6 +57,7 @@ export class GameScene extends Phaser.Scene {
         box.setPosition(170, 100);
         box.setCollisionCategory(this.collision_cat_2);
         box = this.matter.add.sprite(150, 100, 'spritesheet', 21, {label: 'pickable'});
+        box.scaleX = 3;
 
         //this.matter.add.gameObject(this.krzymsky)
         this.cameras.main.zoom = 3;

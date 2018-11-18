@@ -1,6 +1,8 @@
 /// <reference path="../../defs/matter.d.ts" />
 /// <reference path="../../defs/matter.d.ts" />
 
+import Bullet from '../objects/Bullet';
+
 export default class Dude {
     constructor(cfg) {
         //super(cfg.scene, cfg.x, cfg.y, cfg.key);
@@ -15,6 +17,8 @@ export default class Dude {
         this.can_hold_timer = null;
         this.playable = cfg.playable;
         this.anim_prefix = cfg.anim_prefix;
+        this.can_fire = true;
+        this.can_fire_timer = null;
 
         this.sprite = cfg.scene.matter.add.sprite(cfg.x, cfg.y, 'spritesheet', null);
 
@@ -25,6 +29,12 @@ export default class Dude {
 
         this.sprite.setCollisionCategory(this.scene.collision_cat_1);
         this.sprite.setCollidesWith([this.scene.collision_cat_1]);
+
+        this.bullets = this.scene.add.group({
+            classType: Bullet,
+            maxSize: 10,
+            runChildUpdate: true
+        });
 
         this.blocked = {
             left: false,
@@ -144,7 +154,19 @@ export default class Dude {
             this.sprite.setVelocityY(-5);
         }
 
-        if (this.input_action.isDown && this.can_hold)
+        if (this.input_action.isDown && this.can_fire) {
+            let b = this.bullets.get();
+            if (b) {
+                b.fire(this.sprite.x, this.sprite.y, this.sprite.flipX);
+                this.can_fire = false;
+                this.can_fire_timer = this.scene.time.addEvent({
+                    delay: 250,
+                    callback: () => (this.can_fire = true)
+                });
+            }
+        }
+
+        if (false && this.input_action.isDown && this.can_hold)
         {
             if (this.holding_object) {
                 //console.log(this.holding_object);
